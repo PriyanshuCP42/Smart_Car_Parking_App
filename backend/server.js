@@ -20,7 +20,8 @@ const allowedOrigins = [
 
 const corsOptions = {
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.some(o => typeof o === 'string' ? o === origin : o.test(origin))) {
+        // Allow all origins in development (for network testing) or if explicitly allowed
+        if (process.env.NODE_ENV !== 'production' || !origin || allowedOrigins.some(o => typeof o === 'string' ? o === origin : o.test(origin))) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
