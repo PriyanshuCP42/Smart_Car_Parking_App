@@ -9,10 +9,9 @@ if (process.env.NODE_ENV === 'production') {
 
     if (dbUrl) {
         const separator = dbUrl.includes('?') ? '&' : '?';
-        // connection_limit=5: Increase concurrency (1 was too strict)
-        // pgbouncer=true: Keep for Supabase Transaction Pooler compatibility
-        // pool_timeout=30: Wait up to 30s for a connection before failing (default was 10s)
-        urlWithLimit = `${dbUrl}${separator}connection_limit=5&pgbouncer=true&pool_timeout=30`;
+        // connection_limit=3: Balanced approach (enough for mult-step auth, low enough for Vercel)
+        // pgbouncer=true: Required for Supabase Transaction Pooler
+        urlWithLimit = `${dbUrl}${separator}connection_limit=3&pgbouncer=true`;
     }
 
     prisma = new PrismaClient({
