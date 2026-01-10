@@ -11,8 +11,21 @@ const ticketRoutes = require('./src/routes/ticketRoutes');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    process.env.FRONTEND_URL,
+    /\.vercel\.app$/ // Allow all vercel subdomains for convenience during testing
+].filter(Boolean);
+
 const corsOptions = {
-    origin: ['http://localhost:5173', 'http://localhost:5174'], // Allow both common Vite ports
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.some(o => typeof o === 'string' ? o === origin : o.test(origin))) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     optionsSuccessStatus: 200
 };
@@ -77,4 +90,8 @@ const startServer = async () => {
     });
 };
 
-startServer();
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+    startServer();
+}
+
+module.exports = app;
