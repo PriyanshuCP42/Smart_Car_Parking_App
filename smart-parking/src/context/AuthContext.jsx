@@ -43,7 +43,10 @@ export const AuthProvider = ({ children }) => {
             axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
             return { success: true, user: userData };
         } catch (error) {
-            return { success: false, message: error.response?.data?.message || 'Login failed' };
+            const errorData = error.response?.data;
+            const errorMessage = errorData?.message || 'Login failed';
+            const errorDetail = errorData?.error ? ` (${errorData.error})` : '';
+            return { success: false, message: `${errorMessage}${errorDetail}` };
         }
     };
 
@@ -59,7 +62,10 @@ export const AuthProvider = ({ children }) => {
             return { success: true, user: userData };
         } catch (error) {
             console.error('Registration Error:', error);
-            return { success: false, message: error.response?.data?.message || error.message || 'Registration failed' };
+            const errorData = error.response?.data;
+            const errorMessage = errorData?.message || 'Registration failed';
+            const errorDetail = errorData?.error ? ` (${errorData.error})` : '';
+            return { success: false, message: `${errorMessage}${errorDetail}` };
         }
     };
 
