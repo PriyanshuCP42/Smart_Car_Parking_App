@@ -9,10 +9,10 @@ if (process.env.NODE_ENV === 'production') {
 
     if (dbUrl) {
         const separator = dbUrl.includes('?') ? '&' : '?';
-        // connection_limit=1: Prevent pool exhaustion
-        // pgbouncer=true: Disable prepared statements (required for Supabase Transaction Pooler)
-        // connect_timeout=10: Fail fast if DB is unreachable
-        urlWithLimit = `${dbUrl}${separator}connection_limit=1&pgbouncer=true&connect_timeout=10`;
+        // connection_limit=5: Increase concurrency (1 was too strict)
+        // pgbouncer=true: Keep for Supabase Transaction Pooler compatibility
+        // pool_timeout=30: Wait up to 30s for a connection before failing (default was 10s)
+        urlWithLimit = `${dbUrl}${separator}connection_limit=5&pgbouncer=true&pool_timeout=30`;
     }
 
     prisma = new PrismaClient({
