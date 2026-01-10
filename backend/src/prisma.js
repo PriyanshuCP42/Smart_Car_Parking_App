@@ -1,35 +1,15 @@
 const { PrismaClient } = require('@prisma/client');
 
-let prisma;
+const prisma = new PrismaClient();
 
-if (process.env.NODE_ENV === 'production') {
-    // In production (Vercel), enforce connection limit to 1 and pgbouncer mode
-    const dbUrl = process.env.DATABASE_URL;
-    let urlWithLimit = dbUrl;
+process.on('SIGINT', async () => {
+    await prisma.$disconnect();
+    process.exit(0);
+});
 
-    if (dbUrl) {
-        const separator = dbUrl.includes('?') ? '&' : '?';
-        // Only append pgbouncer=true if not present (required for Supabase Transaction Pooler)
-        if (!dbUrl.includes('pgbouncer=true')) {
-            urlWithLimit = `${dbUrl}${separator}pgbouncer=true`;
-        } else {
-            urlWithLimit = dbUrl;
-        }
-    }
-
-    prisma = new PrismaClient({
-        datasources: {
-            db: {
-                url: urlWithLimit
-            }
-        }
-    });
-} else {
-    // In development, use a global variable so we don't create a new client every time hot reload happens
-    if (!global.prisma) {
-        global.prisma = new PrismaClient();
-    }
-    prisma = global.prisma;
-}
+process.on('SIGTERM', async () => {
+    await prisma.$disconnect();
+    process.exit(0);
+});
 
 module.exports = prisma;
