@@ -3,11 +3,17 @@ const { PrismaClient } = require('@prisma/client');
 let prisma;
 
 if (process.env.NODE_ENV === 'production') {
-    // In production (Vercel), enforce connection limit to 1 to avoid exhausting database pool
+    // In production (Vercel), enforce connection limit to 1 and pgbouncer mode
     const dbUrl = process.env.DATABASE_URL;
-    const urlWithLimit = dbUrl && (dbUrl.includes('?')
-        ? `${dbUrl}&connection_limit=1`
-        : `${dbUrl}?connection_limit=1`);
+    let urlWithLimit = dbUrl;
+
+    if (dbUrl) {
+        const separator = dbUrl.includes('?') ? '&' : '?';
+        // connection_limit=1: Prevent pool exhaustion
+        // pgbouncer=true: Disable prepared statements (required for Supabase Transaction Pooler)
+        // connect_timeout=10: Fail fast if DB is unreachable
+        urlWithLimit = `${dbUrl}${separator}connection_limit=1&pgbouncer=true&connect_timeout=10`;
+    }
 
     prisma = new PrismaClient({
         datasources: {
