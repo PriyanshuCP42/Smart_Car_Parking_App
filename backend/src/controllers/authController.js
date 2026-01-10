@@ -40,8 +40,12 @@ const register = async (req, res) => {
 
         res.status(201).json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Something went wrong' });
+        console.error('Registration Error:', error);
+        res.status(500).json({
+            message: 'Registration failed',
+            error: error.message,
+            code: error.code
+        });
     }
 };
 
@@ -96,8 +100,12 @@ const login = async (req, res) => {
 
         res.status(200).json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Something went wrong' });
+        console.error('Login Error:', error);
+        res.status(500).json({
+            message: 'Login failed',
+            error: error.message,
+            code: error.code
+        });
     }
 };
 
