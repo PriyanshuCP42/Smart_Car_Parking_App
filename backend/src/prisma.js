@@ -9,9 +9,13 @@ if (process.env.NODE_ENV === 'production') {
 
     if (dbUrl) {
         const separator = dbUrl.includes('?') ? '&' : '?';
-        // connection_limit=3: Balanced approach (enough for mult-step auth, low enough for Vercel)
-        // pgbouncer=true: Required for Supabase Transaction Pooler
-        urlWithLimit = `${dbUrl}${separator}connection_limit=3&pgbouncer=true`;
+        const separator = dbUrl.includes('?') ? '&' : '?';
+        // Only append pgbouncer=true if not present (required for Supabase Transaction Pooler)
+        if (!dbUrl.includes('pgbouncer=true')) {
+            urlWithLimit = `${dbUrl}${separator}pgbouncer=true`;
+        } else {
+            urlWithLimit = dbUrl;
+        }
     }
 
     prisma = new PrismaClient({
