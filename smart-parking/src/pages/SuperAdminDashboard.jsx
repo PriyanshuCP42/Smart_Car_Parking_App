@@ -28,7 +28,8 @@ export default function SuperAdminDashboard() {
 
     const fetchDashboardData = async () => {
         try {
-            const response = await axios.get('http://localhost:5001/api/super-admin/dashboard-summary', {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+            const response = await axios.get(`${apiUrl}/super-admin/dashboard-summary`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const { stats, pendingApprovals } = response.data;
@@ -51,7 +52,8 @@ export default function SuperAdminDashboard() {
 
     const handleApprove = async (driverId) => {
         try {
-            await axios.post(`http://localhost:5001/api/super-admin/approve-driver/${driverId}`, {}, {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+            await axios.post(`${apiUrl}/super-admin/approve-driver/${driverId}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             // Remove from list locally
@@ -66,7 +68,8 @@ export default function SuperAdminDashboard() {
     const handleReject = async (driverId) => {
         if (!window.confirm('Are you sure you want to reject this driver?')) return;
         try {
-            await axios.post(`http://localhost:5001/api/super-admin/reject-driver/${driverId}`, {}, {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+            await axios.post(`${apiUrl}/super-admin/reject-driver/${driverId}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             // Remove from list locally
