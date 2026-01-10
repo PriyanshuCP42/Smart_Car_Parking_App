@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("USER") // USER, MANAGER, DRIVER, SUPER_ADMIN
+  vehicles  Vehicle[]
+  tickets   Ticket[]  @relation("UserTickets")
+  valetTickets Ticket[] @relation("ValetTickets")
+  driverProfile DriverProfile?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DriverProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  photo           String?
+  phone           String?
+  address         String?
+  dob             String?
+  licenseNumber   String?
+  licenseExpiry   String?
+  licensePhoto    String?
+  status          String   @default("ACTIVE") // ACTIVE, INACTIVE, ON_LEAVE
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Vehicle {
+  id          String   @id @default(uuid())
+  plateNumber String   @unique
+  make        String?
+  model       String?
+  color       String?
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  tickets     Ticket[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([ownerId])
+}
+
+model Ticket {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation("UserTickets", fields: [userId], references: [id])
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  valetId     String?
+  valet       User?    @relation("ValetTickets", fields: [valetId], references: [id])
+  spotNumber  String?
+  gateId      String?
+  status      String   @default("ACTIVE") // ACTIVE, PARKED, RETRIEVING, COMPLETED
+  amount      Float    @default(150)
+  location    String   @default("Inorbit Mall - Malad")
+  entryTime   DateTime @default(now())
+  exitTime    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([userId])
+  @@index([valetId])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([userId, status])
+  @@index([valetId, status])
+}
