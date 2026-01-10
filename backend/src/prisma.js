@@ -9,7 +9,6 @@ if (process.env.NODE_ENV === 'production') {
 
     if (dbUrl) {
         const separator = dbUrl.includes('?') ? '&' : '?';
-        const separator = dbUrl.includes('?') ? '&' : '?';
         // Only append pgbouncer=true if not present (required for Supabase Transaction Pooler)
         if (!dbUrl.includes('pgbouncer=true')) {
             urlWithLimit = `${dbUrl}${separator}pgbouncer=true`;
