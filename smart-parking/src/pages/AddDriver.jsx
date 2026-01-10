@@ -61,8 +61,10 @@ export default function AddDriver() {
             navigate('/manager');
         } catch (error) {
             console.error('Error adding driver:', error);
-            const errorMessage = error.response?.data?.message || (error.response?.status === 413 ? 'Image too large' : error.message);
-            alert(`Failed to add driver: ${errorMessage}`);
+            const errorData = error.response?.data;
+            const detail = errorData?.error || error.message;
+            const code = errorData?.code ? ` (${errorData.code})` : '';
+            alert(`Failed to add driver: ${errorData?.message || 'Unknown error'} \n\nDetails: ${detail}${code}`);
         } finally {
             setLoading(false);
         }
