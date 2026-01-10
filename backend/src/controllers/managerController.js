@@ -116,7 +116,11 @@ const addDriver = async (req, res) => {
         res.status(201).json({ success: true, user: { id: result.id, name: result.name, role: result.role } });
     } catch (error) {
         console.error('Add Driver Error:', error);
-        res.status(500).json({ message: 'Failed to add driver' });
+        res.status(500).json({
+            message: 'Failed to add driver',
+            error: error.message,
+            code: error.code // Prisma error codes if any
+        });
     }
 };
 
