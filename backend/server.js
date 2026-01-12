@@ -40,7 +40,7 @@ app.use((req, res, next) => {
         contentType: req.headers['content-type']
     });
     next();
-});
+}); 
 
 app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
