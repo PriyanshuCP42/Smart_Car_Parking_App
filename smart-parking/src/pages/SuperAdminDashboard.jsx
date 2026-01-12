@@ -127,6 +127,11 @@ export default function SuperAdminDashboard() {
                             }`}
                     >
                         Approvals
+                        {pendingDrivers.length > 0 && (
+                            <span className="ml-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm animate-pulse">
+                                {pendingDrivers.length}
+                            </span>
+                        )}
                     </button>
                 </div>
             </div>
