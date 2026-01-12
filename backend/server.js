@@ -12,10 +12,9 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    process.env.FRONTEND_URL,
-    /\.vercel\.app$/ // Allow all vercel subdomains for convenience during testing
+    process.env.FRONTEND_SERVER_URL,
+    process.env.FRONTEND_LOCAL_URL,
+    /\.vercel\.app$/
 ].filter(Boolean);
 
 const corsOptions = {

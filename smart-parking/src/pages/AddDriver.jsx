@@ -50,14 +50,17 @@ export default function AddDriver() {
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            // In a real app we'd handle file uploads properly
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+            const apiUrl =
+                import.meta.env.VITE_API_BACKEND_SERVER_URL ||
+                import.meta.env.VITE_API_BACKEND_LOCAL_URL;
+
             await axios.post(`${apiUrl}/manager/add-driver`, {
                 ...formData,
-                password: formData.password || 'valetUser123!' // Use provided password or default if empty (though validaiton should prevent empty)
+                password: formData.password || 'valetUser123!'
             }, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
+
             navigate('/manager');
         } catch (error) {
             console.error('Error adding driver:', error);

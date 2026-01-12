@@ -16,6 +16,10 @@ import {
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
+const BASE_URL =
+    import.meta.env.VITE_API_BACKEND_SERVER_URL ||
+    import.meta.env.VITE_API_BACKEND_LOCAL_URL;
+
 export default function ManagerDashboard() {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
@@ -30,7 +34,6 @@ export default function ManagerDashboard() {
     const [search, setSearch] = useState('');
     const [activeTab, setActiveTab] = useState('All');
 
-    // Assign Valet Modal State
     const [showAssignModal, setShowAssignModal] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [drivers, setDrivers] = useState([]);
@@ -39,17 +42,19 @@ export default function ManagerDashboard() {
 
     useEffect(() => {
         fetchDashboardData();
-        const interval = setInterval(fetchDashboardData, 15000); // Poll every 15 seconds to save resources
+        const interval = setInterval(fetchDashboardData, 15000);
         return () => clearInterval(interval);
     }, []);
 
     const fetchDashboardData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+            const apiUrl = BASE_URL;
+
             const response = await axios.get(`${apiUrl}/manager/dashboard-summary`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+
             const { stats, operations, drivers } = response.data;
             setStats(stats);
             setOperations(operations);
@@ -67,7 +72,8 @@ export default function ManagerDashboard() {
         setAssigning(true);
         try {
             const token = localStorage.getItem('token');
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+            const apiUrl = BASE_URL;
+
             await axios.post(`${apiUrl}/manager/assign-valet`, {
                 ticketId: selectedTicket.id,
                 valetId: selectedDriver
@@ -75,7 +81,6 @@ export default function ManagerDashboard() {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // Refresh data
             await fetchDashboardData();
             setShowAssignModal(false);
             setSelectedTicket(null);
@@ -270,6 +275,7 @@ export default function ManagerDashboard() {
                     )}
                 </div>
             </div>
+
             {/* Assign Valet Modal */}
             {showAssignModal && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">

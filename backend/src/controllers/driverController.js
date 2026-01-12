@@ -1,4 +1,4 @@
-const prisma = require('../prisma');
+const prisma = require("../prisma");
 
 // Get all available jobs (Park requests or Retrieval requests)
 const getAvailableJobs = async (req, res) => {

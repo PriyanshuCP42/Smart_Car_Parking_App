@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const prisma = require('../prisma');
+const prisma = require("../prisma");
 
 const getDashboardStats = async (req, res) => {
     try {

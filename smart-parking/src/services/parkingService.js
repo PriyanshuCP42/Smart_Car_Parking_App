@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+const BASE_URL =
+    import.meta.env.VITE_API_BACKEND_SERVER_URL ||
+    import.meta.env.VITE_API_BACKEND_LOCAL_URL;
 
 // Helper to map backend data layout to frontend expectations if needed
 // Backend: { id, userId, vehicleId, gateId, spotNumber, status, entryTime, vehicle: {...} }
@@ -9,21 +11,20 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 export const parkingService = {
     getActiveTickets: async () => {
         try {
-            const response = await axios.get(`${API_URL}/tickets/active`);
-            return response.data; // Now returns an array of tickets
+            const response = await axios.get(`${BASE_URL}/tickets/active`);
+            return response.data;
         } catch (error) {
             console.error('Error fetching active sessions:', error);
             if (error.response && error.response.status === 404) {
-                return []; // Return empty array if none found
+                return [];
             }
             throw error;
         }
     },
 
     scanQR: async (data) => {
-        // data: { vehicleId, gate }
         try {
-            const response = await axios.post(`${API_URL}/tickets/create`, {
+            const response = await axios.post(`${BASE_URL}/tickets/create`, {
                 vehicleId: data.vehicleId,
                 gateId: data.gate
             });
@@ -40,7 +41,7 @@ export const parkingService = {
 
     completeSession: async () => {
         try {
-            const response = await axios.post(`${API_URL}/tickets/complete`);
+            const response = await axios.post(`${BASE_URL}/tickets/complete`);
             return response.data;
         } catch (error) {
             console.error('Error completing session:', error);
@@ -50,7 +51,7 @@ export const parkingService = {
 
     getHistory: async () => {
         try {
-            const response = await axios.get(`${API_URL}/tickets/history`);
+            const response = await axios.get(`${BASE_URL}/tickets/history`);
             return response.data;
         } catch (error) {
             console.error('Error fetching history:', error);
@@ -60,7 +61,7 @@ export const parkingService = {
 
     requestRetrieval: async (ticketId) => {
         try {
-            const response = await axios.post(`${API_URL}/tickets/request-retrieval`, { ticketId });
+            const response = await axios.post(`${BASE_URL}/tickets/request-retrieval`, { ticketId });
             return response.data;
         } catch (error) {
             console.error('Error requesting retrieval:', error);
@@ -71,7 +72,7 @@ export const parkingService = {
     // Driver API
     getAvailableJobs: async () => {
         try {
-            const response = await axios.get(`${API_URL}/driver/jobs`);
+            const response = await axios.get(`${BASE_URL}/driver/jobs`);
             return response.data;
         } catch (error) {
             console.error('Error fetching available jobs:', error);
@@ -81,7 +82,7 @@ export const parkingService = {
 
     acceptJob: async (ticketId) => {
         try {
-            const response = await axios.post(`${API_URL}/driver/accept`, { ticketId });
+            const response = await axios.post(`${BASE_URL}/driver/accept`, { ticketId });
             return response.data;
         } catch (error) {
             console.error('Error accepting job:', error);
@@ -91,7 +92,7 @@ export const parkingService = {
 
     getCurrentJob: async () => {
         try {
-            const response = await axios.get(`${API_URL}/driver/current`);
+            const response = await axios.get(`${BASE_URL}/driver/current`);
             return response.data;
         } catch (error) {
             console.error('Error fetching current job:', error);
@@ -101,7 +102,7 @@ export const parkingService = {
 
     updateJobStatus: async (ticketId, status) => {
         try {
-            const response = await axios.post(`${API_URL}/driver/update-status`, { ticketId, status });
+            const response = await axios.post(`${BASE_URL}/driver/update-status`, { ticketId, status });
             return response.data;
         } catch (error) {
             console.error('Error updating job status:', error);
@@ -111,7 +112,7 @@ export const parkingService = {
 
     getDriverHistory: async () => {
         try {
-            const response = await axios.get(`${API_URL}/driver/history`);
+            const response = await axios.get(`${BASE_URL}/driver/history`);
             return response.data;
         } catch (error) {
             console.error('Error fetching driver history:', error);

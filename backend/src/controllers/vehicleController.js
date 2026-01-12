@@ -1,4 +1,4 @@
-const prisma = require('../prisma');
+const prisma = require("../prisma");
 
 const addVehicle = async (req, res) => {
     const { plateNumber, make, model, color } = req.body;

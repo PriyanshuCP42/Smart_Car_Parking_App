@@ -1,4 +1,4 @@
-const prisma = require('../prisma');
+const prisma = require("../prisma");
 
 const generateSpot = async () => {
     // Standard parking lot size: 50 spots (A-1 to A-50)

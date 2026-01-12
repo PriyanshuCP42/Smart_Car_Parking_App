@@ -17,6 +17,10 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
+const BASE_URL =
+    import.meta.env.VITE_API_BACKEND_SERVER_URL ||
+    import.meta.env.VITE_API_BACKEND_LOCAL_URL;
+
 export default function SuperAdminDashboard() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('overview');
@@ -28,7 +32,7 @@ export default function SuperAdminDashboard() {
 
     const fetchDashboardData = async () => {
         try {
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+            const apiUrl = BASE_URL;
             const response = await axios.get(`${apiUrl}/super-admin/dashboard-summary`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -45,18 +49,17 @@ export default function SuperAdminDashboard() {
     useEffect(() => {
         if (token) {
             fetchDashboardData();
-            const interval = setInterval(fetchDashboardData, 30000); // Poll every 30 seconds
+            const interval = setInterval(fetchDashboardData, 30000);
             return () => clearInterval(interval);
         }
-    }, [token, selectedSite]); // Re-fetch if site changes (mock logic)
+    }, [token, selectedSite]);
 
     const handleApprove = async (driverId) => {
         try {
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+            const apiUrl = BASE_URL;
             await axios.post(`${apiUrl}/super-admin/approve-driver/${driverId}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            // Remove from list locally
             setPendingDrivers(prev => prev.filter(d => d.id !== driverId));
             alert('Driver Approved!');
         } catch (error) {
@@ -68,11 +71,10 @@ export default function SuperAdminDashboard() {
     const handleReject = async (driverId) => {
         if (!window.confirm('Are you sure you want to reject this driver?')) return;
         try {
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+            const apiUrl = BASE_URL;
             await axios.post(`${apiUrl}/super-admin/reject-driver/${driverId}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            // Remove from list locally
             setPendingDrivers(prev => prev.filter(d => d.id !== driverId));
             alert('Driver Rejected!');
         } catch (error) {
@@ -92,9 +94,9 @@ export default function SuperAdminDashboard() {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 relative overflow-hidden max-w-md mx-auto shadow-2xl font-['Outfit']">
 
-            {/* Header Section - Now effectively top of the app */}
+            {/* Header */}
             <div className="w-full bg-[#7C3AED] p-6 pb-8 rounded-b-[40px] shadow-lg z-10 -mt-6 -mx-6 mb-4">
-                <div className="flex items-center gap-3 mb-6 text-white pt-6"> {/* Added pt-6 for status bar spacing simulation */}
+                <div className="flex items-center gap-3 mb-6 text-white pt-6">
                     <div className="flex-1">
                         <h1 className="text-xl font-semibold">Super Admin</h1>
                         <p className="text-white/70 text-xs">System overview and approvals</p>
@@ -140,6 +142,7 @@ export default function SuperAdminDashboard() {
             <div className="flex-1 w-full relative overflow-y-auto no-scrollbar">
                 {activeTab === 'overview' ? (
                     <div className="space-y-6 animate-fadeIn pb-6">
+
                         {/* Site Selector */}
                         <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100">
                             <label className="text-xs font-semibold text-gray-500 mb-2 block uppercase tracking-wider">Select Site</label>
@@ -151,8 +154,6 @@ export default function SuperAdminDashboard() {
                                     className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border-none text-sm font-medium text-gray-800 focus:ring-2 focus:ring-[#7C3AED]/20 appearance-none cursor-pointer hover:bg-gray-100 transition-colors"
                                 >
                                     <option>Inorbit Mall - Malad</option>
-                                    {/* <option>Phoenix Mall - Lower Parel</option>
-                                    <option>Infiniti Mall - Andheri</option> */}
                                 </select>
                             </div>
                         </div>
@@ -164,17 +165,13 @@ export default function SuperAdminDashboard() {
                                 Today's Performance
                             </h3>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-md transition-all">
+                                <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100">
                                     <p className="text-xs text-gray-500 mb-1">Tickets Issued</p>
-                                    <div className="flex items-end gap-1">
-                                        <span className="text-2xl font-bold text-[#7C3AED] group-hover:scale-105 transition-transform">{stats?.totalTickets || 0}</span>
-                                    </div>
+                                    <span className="text-2xl font-bold text-[#7C3AED]">{stats?.totalTickets || 0}</span>
                                 </div>
-                                <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-md transition-all">
+                                <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100">
                                     <p className="text-xs text-gray-500 mb-1">Collection</p>
-                                    <div className="flex items-end gap-1">
-                                        <span className="text-2xl font-bold text-[#7C3AED] group-hover:scale-105 transition-transform">₹{stats?.totalCollection || 0}</span>
-                                    </div>
+                                    <span className="text-2xl font-bold text-[#7C3AED]">₹{stats?.totalCollection || 0}</span>
                                 </div>
                             </div>
                         </div>
@@ -186,35 +183,9 @@ export default function SuperAdminDashboard() {
                                 Overall Statistics
                             </h3>
                             <div className="space-y-3">
-                                <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between group hover:shadow-md transition-all">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-[#7C3AED]/10 rounded-xl text-[#7C3AED]">
-                                            <Ticket size={20} />
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-600">Total Tickets</span>
-                                    </div>
-                                    <span className="text-xl font-bold text-gray-900">{stats?.totalTickets || 0}</span>
-                                </div>
-
-                                <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between group hover:shadow-md transition-all">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-[#10B981]/10 rounded-xl text-[#10B981]">
-                                            <DollarSign size={20} />
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-600">Total Collection</span>
-                                    </div>
-                                    <span className="text-xl font-bold text-gray-900">₹{stats?.totalCollection || 0}</span>
-                                </div>
-
-                                <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between group hover:shadow-md transition-all">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-[#3B82F6]/10 rounded-xl text-[#3B82F6]">
-                                            <Car size={20} />
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-600">Active Parking</span>
-                                    </div>
-                                    <span className="text-xl font-bold text-gray-900">{stats?.activeParking || 0}</span>
-                                </div>
+                                <StatRow icon={<Ticket size={20} />} label="Total Tickets" value={stats?.totalTickets || 0} color="text-[#7C3AED]" />
+                                <StatRow icon={<DollarSign size={20} />} label="Total Collection" value={`₹${stats?.totalCollection || 0}`} color="text-[#10B981]" />
+                                <StatRow icon={<Car size={20} />} label="Active Parking" value={stats?.activeParking || 0} color="text-[#3B82F6]" />
                             </div>
                         </div>
 
@@ -249,13 +220,10 @@ export default function SuperAdminDashboard() {
                             </div>
                         ) : (
                             pendingDrivers.map((driver) => (
-                                <div key={driver.id} className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition-all">
-                                    <div className="absolute top-0 left-0 w-1 h-full bg-[#EAB308]"></div>
-
-                                    <div className="pl-3 mb-4 flex items-start justify-between">
+                                <div key={driver.id} className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                                    <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-12 h-12 rounded-2xl bg-gray-100 overflow-hidden">
-                                                {/* Use a placeholder or actual image if available in profile */}
                                                 {driver.driverProfile?.photo ? (
                                                     <img src={driver.driverProfile.photo} alt={driver.name} className="w-full h-full object-cover" />
                                                 ) : (
@@ -272,7 +240,7 @@ export default function SuperAdminDashboard() {
                                         </div>
                                     </div>
 
-                                    <div className="pl-3 grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-2 gap-3">
                                         <button
                                             onClick={() => handleApprove(driver.id)}
                                             className="py-2.5 px-4 bg-[#7C3AED] text-white rounded-xl text-xs font-semibold hover:bg-[#6D28D9] transition-colors flex items-center justify-center gap-2"
@@ -295,6 +263,18 @@ export default function SuperAdminDashboard() {
                 )}
             </div>
 
+        </div>
+    );
+}
+
+function StatRow({ icon, label, value, color }) {
+    return (
+        <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-xl ${color} bg-opacity-10`}>{icon}</div>
+                <span className="text-sm font-medium text-gray-600">{label}</span>
+            </div>
+            <span className="text-xl font-bold text-gray-900">{value}</span>
         </div>
     );
 }

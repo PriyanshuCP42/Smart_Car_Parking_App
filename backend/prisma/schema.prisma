@@ -11,6 +11,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -83,4 +84,12 @@ model Ticket {
   @@index([updatedAt])
   @@index([userId, status])
   @@index([valetId, status])
+}
+
+model dummy {
+  id String @id @default(uuid())
+  name String
+  age Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
