@@ -148,9 +148,8 @@ const getAllDrivers = async (req, res) => {
 };
 
 const assignValet = async (req, res) => {
-    const { ticketId, valetId } = req.body;
+    const { ticketId, valetId } = req.body
     try {
-        // Get current ticket status
         const currentTicket = await prisma.ticket.findUnique({
             where: { id: ticketId }
         });
@@ -159,7 +158,7 @@ const assignValet = async (req, res) => {
             return res.status(404).json({ message: 'Ticket not found' });
         }
 
-        // Check if the valet is active
+
         const valet = await prisma.driverProfile.findUnique({
             where: { userId: valetId }
         });

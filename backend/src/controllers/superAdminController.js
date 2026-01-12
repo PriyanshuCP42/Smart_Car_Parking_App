@@ -116,6 +116,9 @@ const getDashboardSummary = async (req, res) => {
             })
         ]);
 
+        console.log('Pending Drivers Found:', pendingDrivers.length);
+        console.log('Pending Drivers Data:', JSON.stringify(pendingDrivers, null, 2));
+
         res.json({
             stats: {
                 totalTickets,
