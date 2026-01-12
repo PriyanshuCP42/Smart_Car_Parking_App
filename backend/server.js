@@ -43,11 +43,11 @@ app.use((req, res, next) => {
 }); 
 
 app.use('/api/auth', authRoutes);
-app.use('/vehicles', vehicleRoutes);
-app.use('/tickets', ticketRoutes);
-app.use('/manager', require('./src/routes/managerRoutes'));
-app.use('/driver', require('./src/routes/driverRoutes'));
-app.use('/super-admin', require('./src/routes/superAdminRoutes'));
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/tickets', ticketRoutes);
+app.use('/api/manager', require('./src/routes/managerRoutes'));
+app.use('/api/driver', require('./src/routes/driverRoutes'));
+app.use('/api/super-admin', require('./src/routes/superAdminRoutes'));
 
 app.get('/', (req, res) => {
     res.send('Server is running');

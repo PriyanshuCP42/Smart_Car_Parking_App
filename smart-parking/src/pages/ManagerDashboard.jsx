@@ -51,7 +51,7 @@ export default function ManagerDashboard() {
             const token = localStorage.getItem('token');
             const apiUrl = BASE_URL;
 
-            const response = await axios.get(`${apiUrl}/manager/dashboard-summary`, {
+            const response = await axios.get(`${apiUrl}/api/manager/dashboard-summary`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -74,7 +74,7 @@ export default function ManagerDashboard() {
             const token = localStorage.getItem('token');
             const apiUrl = BASE_URL;
 
-            await axios.post(`${apiUrl}/manager/assign-valet`, {
+            await axios.post(`${apiUrl}/api/manager/assign-valet`, {
                 ticketId: selectedTicket.id,
                 valetId: selectedDriver
             }, {

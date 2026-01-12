@@ -4,7 +4,7 @@ const BASE_URL =
     import.meta.env.VITE_API_BACKEND_SERVER_URL ||
     import.meta.env.VITE_API_BACKEND_LOCAL_URL;
 
-const API_URL = `${BASE_URL}/vehicles`;
+const API_URL = `${BASE_URL}/api/vehicles`;
 
 export const vehicleService = {
     getAll: async () => {

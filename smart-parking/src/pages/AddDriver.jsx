@@ -54,7 +54,7 @@ export default function AddDriver() {
                 import.meta.env.VITE_API_BACKEND_SERVER_URL ||
                 import.meta.env.VITE_API_BACKEND_LOCAL_URL;
 
-            await axios.post(`${apiUrl}/manager/add-driver`, {
+            await axios.post(`${apiUrl}/api/manager/add-driver`, {
                 ...formData,
                 password: formData.password || 'valetUser123!'
             }, {

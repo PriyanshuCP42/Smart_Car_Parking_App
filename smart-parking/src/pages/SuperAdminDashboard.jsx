@@ -33,7 +33,7 @@ export default function SuperAdminDashboard() {
     const fetchDashboardData = async () => {
         try {
             const apiUrl = BASE_URL;
-            const response = await axios.get(`${apiUrl}/super-admin/dashboard-summary`, {
+            const response = await axios.get(`${apiUrl}/api/super-admin/dashboard-summary`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const { stats, pendingApprovals } = response.data;
@@ -57,7 +57,7 @@ export default function SuperAdminDashboard() {
     const handleApprove = async (driverId) => {
         try {
             const apiUrl = BASE_URL;
-            await axios.post(`${apiUrl}/super-admin/approve-driver/${driverId}`, {}, {
+            await axios.post(`${apiUrl}/api/super-admin/approve-driver/${driverId}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setPendingDrivers(prev => prev.filter(d => d.id !== driverId));
@@ -72,7 +72,7 @@ export default function SuperAdminDashboard() {
         if (!window.confirm('Are you sure you want to reject this driver?')) return;
         try {
             const apiUrl = BASE_URL;
-            await axios.post(`${apiUrl}/super-admin/reject-driver/${driverId}`, {}, {
+            await axios.post(`${apiUrl}/api/super-admin/reject-driver/${driverId}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setPendingDrivers(prev => prev.filter(d => d.id !== driverId));
